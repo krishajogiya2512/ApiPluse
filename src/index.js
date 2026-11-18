@@ -1,7 +1,7 @@
 /**
- * api-monitor-lite — public entry point.
+ * ApiPulse — public entry point.
  *
  * Re-exports the createMonitor factory so consumers can write:
- *   import { createMonitor } from 'api-monitor-lite';
+ *   import { createMonitor } from 'apipulse';
  */
 export { createMonitor } from './monitor.js';

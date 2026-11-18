@@ -32,7 +32,7 @@ describe('package exports — module resolution', () => {
     const out = runNode([
       '--input-type=module',
       '-e',
-      "import { createMonitor } from 'api-monitor-lite'; process.stdout.write(typeof createMonitor);",
+      "import { createMonitor } from 'apipulse'; process.stdout.write(typeof createMonitor);",
     ]);
     expect(out.trim()).toBe('function');
   });
@@ -40,9 +40,9 @@ describe('package exports — module resolution', () => {
   test('package.json is exposed via the exports map', () => {
     const out = runNode([
       '-e',
-      "process.stdout.write(require('api-monitor-lite/package.json').name);",
+      "process.stdout.write(require('apipulse/package.json').name);",
     ]);
-    expect(out.trim()).toBe('api-monitor-lite');
+    expect(out.trim()).toBe('apipulse');
   });
 
   test('CommonJS: `require` resolves createMonitor (Node with require(esm))', () => {
@@ -53,7 +53,7 @@ describe('package exports — module resolution', () => {
     }
     const out = runNode([
       '-e',
-      "const { createMonitor } = require('api-monitor-lite'); process.stdout.write(typeof createMonitor);",
+      "const { createMonitor } = require('apipulse'); process.stdout.write(typeof createMonitor);",
     ]);
     expect(out.trim()).toBe('function');
   });
@@ -62,13 +62,13 @@ describe('package exports — module resolution', () => {
     const esm = runNode([
       '--input-type=module',
       '-e',
-      "import * as m from 'api-monitor-lite'; process.stdout.write(Object.keys(m).sort().join(','));",
+      "import * as m from 'apipulse'; process.stdout.write(Object.keys(m).sort().join(','));",
     ]);
     expect(esm.trim()).toBe('createMonitor');
     if (supportsRequireEsm()) {
       const cjs = runNode([
         '-e',
-        "process.stdout.write(Object.keys(require('api-monitor-lite')).sort().join(','));",
+        "process.stdout.write(Object.keys(require('apipulse')).sort().join(','));",
       ]);
       expect(cjs.trim()).toBe('createMonitor');
     }

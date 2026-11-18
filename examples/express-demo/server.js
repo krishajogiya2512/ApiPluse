@@ -1,8 +1,8 @@
 /**
- * Express Demo — api-monitor-lite
+ * Express Demo — ApiPulse
  *
  * A sample Express application that demonstrates how to integrate
- * api-monitor-lite for real-time API monitoring.
+ * ApiPulse for real-time API monitoring.
  *
  * Run:
  *   cd examples/express-demo
@@ -20,7 +20,7 @@
  *   POST http://localhost:3000/monitor/reset — reset all stats
  */
 import express from 'express';
-import { createMonitor } from 'api-monitor-lite';
+import { createMonitor } from 'apipulse';
 
 const app = express();
 const PORT = process.env.PORT || 3000;

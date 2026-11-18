@@ -1,6 +1,6 @@
-# api-monitor-lite — Express Demo
+# ApiPulse — Express Demo
 
-A sample Express.js application that demonstrates how to integrate and use `api-monitor-lite` for real-time API monitoring.
+A sample Express.js application that demonstrates how to integrate and use `apipulse` for real-time API monitoring.
 
 ## Setup
 

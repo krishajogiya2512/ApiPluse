@@ -1,5 +1,5 @@
 /**
- * Type definitions for api-monitor-lite.
+ * Type definitions for ApiPulse.
  *
  * These declarations describe the public API exported from
  * `src/index.js`. They intentionally avoid depending on `@types/express`;

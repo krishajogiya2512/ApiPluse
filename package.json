@@ -1,7 +1,7 @@
 {
-  "name": "api-monitor-lite",
+  "name": "apipulse",
   "version": "1.0.0",
-  "description": "Lightweight Express.js API monitoring middleware for Node.js — tracks response times, error rates, slow requests, and endpoint analytics with zero configuration.",
+  "description": "Lightweight Express.js API monitoring middleware for Node.js — tracks response times, error rates, slow requests, and endpoint analytics with zero configuration. Powered by ApiPulse.",
   "type": "module",
   "workspaces": [
     "examples/express-demo"

@@ -1,4 +1,4 @@
-# api-monitor-lite
+# ApiPulse
 
 > Lightweight Express.js API monitoring middleware for Node.js — tracks response times, error rates, slow requests, and endpoint analytics with zero configuration.
 
@@ -46,7 +46,7 @@ Modern backend applications expose dozens or hundreds of API endpoints. Without 
 
 Production-grade monitoring tools (Datadog, New Relic, Prometheus) are powerful but complex to set up and often expensive. Many Node.js projects — especially academic, hobby, or early-stage projects — need a simple, zero-dependency way to understand their API performance.
 
-**api-monitor-lite** solves this by providing a single Express middleware that automatically collects performance metrics with no external services, no database, and no configuration required.
+**ApiPulse** solves this by providing a single Express middleware that automatically collects performance metrics with no external services, no database, and no configuration required.
 
 ---
 
@@ -98,7 +98,7 @@ Production-grade monitoring tools (Datadog, New Relic, Prometheus) are powerful 
 ## Installation
 
 ```bash
-npm install api-monitor-lite
+npm install apipulse
 ```
 
 > **Note:** Express.js is a peer dependency. You must have Express installed in your project:
@@ -113,7 +113,7 @@ npm install api-monitor-lite
 
 ```javascript
 import express from 'express';
-import { createMonitor } from 'api-monitor-lite';
+import { createMonitor } from 'apipulse';
 
 const app = express();
 
@@ -393,8 +393,8 @@ The package ships its own TypeScript declarations (`src/index.d.ts`), so no `@ty
 
 ```ts
 import express from 'express';
-import { createMonitor } from 'api-monitor-lite';
-import type { MonitorOptions, MonitorStats, EndpointStats } from 'api-monitor-lite';
+import { createMonitor } from 'apipulse';
+import type { MonitorOptions, MonitorStats, EndpointStats } from 'apipulse';
 
 const options: MonitorOptions = {
   slowThreshold: 500,
@@ -431,7 +431,7 @@ The primary, fully supported entry point is ESM (`import`). In addition, the `ex
 
 ```js
 // CommonJS
-const { createMonitor } = require('api-monitor-lite');
+const { createMonitor } = require('apipulse');
 const express = require('express');
 
 const monitor = createMonitor();
@@ -441,8 +441,8 @@ app.use(monitor.middleware);
 
 > **Trade-offs:**
 > - The package is authored as pure ESM and ships no compiled CommonJS build, so `require()` relies on Node's native ES-module loading rather than a bundled `.cjs` artifact (this avoids a fragile, duplicated dual-build).
-> - On Node 18 and Node 20.0–20.18, `require('api-monitor-lite')` throws `ERR_REQUIRE_ESM`. Use ESM `import` there.
-> - In a **TypeScript** project compiled as CommonJS (`module: "node16"`/`"nodenext"` without `"type": "module"`), TypeScript reports `TS1479` for a static `import` of this package. Use a dynamic `await import('api-monitor-lite')`, or configure the project as ESM (`.mts` / `"type": "module"`), which is fully supported.
+> - On Node 18 and Node 20.0–20.18, `require('apipulse')` throws `ERR_REQUIRE_ESM`. Use ESM `import` there.
+> - In a **TypeScript** project compiled as CommonJS (`module: "node16"`/`"nodenext"` without `"type": "module"`), TypeScript reports `TS1479` for a static `import` of this package. Use a dynamic `await import('apipulse')`, or configure the project as ESM (`.mts` / `"type": "module"`), which is fully supported.
 > - ESM works on every supported Node version (≥ 18).
 
 ---
@@ -510,7 +510,7 @@ See [`examples/express-demo/README.md`](examples/express-demo/README.md) for ful
 ## Project Architecture
 
 ```
-api-monitor-lite/
+ApiPulse/
 │
 ├── src/
 │   ├── index.js          — Public entry point (re-exports createMonitor)
@@ -574,7 +574,7 @@ api-monitor-lite/
 5. **Percentile approximation** — Percentiles are computed from the most recent `maxSamples` response times, not from all requests ever. With the default of 1000 samples, this is accurate for most use cases.
 6. **No automatic endpoint exposure** — The package does not automatically create a `/stats` endpoint. This is intentional — it lets the developer control access and routing.
 7. **Endpoint map is capped, not unlimited** — Requests that match no Express route (404s) are keyed by their raw path, but the endpoint map is bounded by `maxEndpoints` (default `1000`); beyond that, requests are aggregated into a per-method `"METHOD (overflow)"` bucket. See [Route Pattern Grouping](#route-pattern-grouping).
-8. **CommonJS requires a recent Node** — `require('api-monitor-lite')` works on Node ≥ 20.19 / ≥ 22.12 via native ES-module loading; on Node 18 use ESM `import` instead. See [CommonJS Usage](#commonjs-usage).
+8. **CommonJS requires a recent Node** — `require('apipulse')` works on Node ≥ 20.19 / ≥ 22.12 via native ES-module loading; on Node 18 use ESM `import` instead. See [CommonJS Usage](#commonjs-usage).
 
 ---
 
@@ -604,8 +604,8 @@ Contributions are welcome! To contribute:
 ### Development Setup
 
 ```bash
-git clone https://github.com/<your-username>/api-monitor-lite.git
-cd api-monitor-lite
+git clone https://github.com/<your-username>/ApiPulse.git
+cd ApiPulse
 npm install
 npm test
 ```
@@ -622,7 +622,3 @@ npm test
 ## License
 
 [MIT](LICENSE) © 2024
-# ApiPluse
-# ApiPluse
-# ApiPluse
-# ApiPluse
