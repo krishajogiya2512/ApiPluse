@@ -78,7 +78,7 @@ Production-grade monitoring tools (Datadog, New Relic, Prometheus) are powerful 
 - ✅ **Non-intrusive** — Never modifies the response body or interferes with Express.
 - ✅ **Lightweight** — Zero production dependencies.
 - ✅ **TypeScript ready** — Ships its own `.d.ts` declarations; no `@types` package required.
-- ✅ **ESM and CommonJS** — Native ES modules, plus a `require` condition for recent Node versions.
+- ✅ **ESM and CommonJS** — Native ES modules plus a real compiled CommonJS build (`dist/cjs`) so `require()` works on Node ≥ 18.
 
 ---
 
@@ -98,7 +98,7 @@ Production-grade monitoring tools (Datadog, New Relic, Prometheus) are powerful 
 ## Installation
 
 ```bash
-npm install apipulse
+npm install @krisha_2512/apipulse
 ```
 
 > **Note:** Express.js is a peer dependency. You must have Express installed in your project:
@@ -113,7 +113,7 @@ npm install apipulse
 
 ```javascript
 import express from 'express';
-import { createMonitor } from 'apipulse';
+import { createMonitor } from '@krisha_2512/apipulse';
 
 const app = express();
 
@@ -393,8 +393,8 @@ The package ships its own TypeScript declarations (`src/index.d.ts`), so no `@ty
 
 ```ts
 import express from 'express';
-import { createMonitor } from 'apipulse';
-import type { MonitorOptions, MonitorStats, EndpointStats } from 'apipulse';
+import { createMonitor } from '@krisha_2512/apipulse';
+import type { MonitorOptions, MonitorStats, EndpointStats } from '@krisha_2512/apipulse';
 
 const options: MonitorOptions = {
   slowThreshold: 500,
@@ -427,11 +427,11 @@ Exported types:
 
 ## CommonJS Usage
 
-The primary, fully supported entry point is ESM (`import`). In addition, the `exports` map declares a `require` condition, so CommonJS consumers can `require()` the package on Node versions that support native `require()` of ES modules (Node ≥ 20.19 or ≥ 22.12):
+`require()` is fully supported on every Node version in the supported range (≥ 18). The package ships a real CommonJS build in `dist/cjs`, generated from the ESM source at pack time and included in the published tarball — no consumer build step is needed.
 
 ```js
 // CommonJS
-const { createMonitor } = require('apipulse');
+const { createMonitor } = require('@krisha_2512/apipulse');
 const express = require('express');
 
 const monitor = createMonitor();
@@ -439,11 +439,18 @@ const app = express();
 app.use(monitor.middleware);
 ```
 
-> **Trade-offs:**
-> - The package is authored as pure ESM and ships no compiled CommonJS build, so `require()` relies on Node's native ES-module loading rather than a bundled `.cjs` artifact (this avoids a fragile, duplicated dual-build).
-> - On Node 18 and Node 20.0–20.18, `require('apipulse')` throws `ERR_REQUIRE_ESM`. Use ESM `import` there.
-> - In a **TypeScript** project compiled as CommonJS (`module: "node16"`/`"nodenext"` without `"type": "module"`), TypeScript reports `TS1479` for a static `import` of this package. Use a dynamic `await import('apipulse')`, or configure the project as ESM (`.mts` / `"type": "module"`), which is fully supported.
-> - ESM works on every supported Node version (≥ 18).
+The `exports` map routes each module system to the right artifact:
+
+| Condition | JS entry point | Type declarations |
+|-----------|----------------|-------------------|
+| `import` (ESM) | `src/index.js` | `src/index.d.ts` |
+| `require` (CommonJS) | `dist/cjs/index.js` | `dist/cjs/index.d.cts` |
+
+> **Notes:**
+> - Both module systems expose the identical public API (`createMonitor`).
+> - TypeScript works in both modes. The CommonJS entry point ships `.d.cts` declarations, so a TypeScript project compiled as CommonJS resolves types cleanly (no `TS1479`).
+> - `require(...)` returns the module namespace object, so use named destructuring: `const { createMonitor } = require('@krisha_2512/apipulse')`.
+> - The build targets Node 18 to match the declared `engines` range.
 
 ---
 
@@ -530,6 +537,12 @@ ApiPulse/
 │   ├── endpoints.test.js   — Bounded endpoint tracking (maxEndpoints)
 │   └── package.test.js     — ESM/CJS export resolution
 │
+├── scripts/
+│   └── build-cjs.mjs     — Generates the CommonJS build in dist/cjs
+│
+├── dist/
+│   └── cjs/              — Generated CommonJS build + index.d.cts (build output)
+│
 ├── examples/
 │   └── express-demo/      — Complete demo Express application
 │       ├── server.js
@@ -553,6 +566,7 @@ ApiPulse/
 | `tracker.js` | Maintains all counters and distributions in memory. |
 | `statistics.js` | Stateless math functions for percentiles and averages. |
 | `utils.js` | Small utilities shared across modules. |
+| `scripts/build-cjs.mjs` | Builds the CommonJS artifact (`dist/cjs`) from the ESM source. |
 
 ### Design Decisions
 
@@ -562,6 +576,7 @@ ApiPulse/
 4. **Safe snapshots** — `getStats()` returns fresh plain objects, not references to internal Maps.
 5. **Double-record guard** — Each request has a boolean flag preventing it from being counted twice if both `finish` and `close` events fire.
 6. **Route pattern detection** — Uses `req.route.path` (Express route pattern) when available, falling back to `req.path` for unmatched routes (404s).
+7. **Dual package** — `import` resolves to the ESM source; `require` resolves to a Babel-compiled CommonJS build in `dist/cjs`, so both module systems work on Node ≥ 18 without a consumer build step.
 
 ---
 
@@ -574,7 +589,7 @@ ApiPulse/
 5. **Percentile approximation** — Percentiles are computed from the most recent `maxSamples` response times, not from all requests ever. With the default of 1000 samples, this is accurate for most use cases.
 6. **No automatic endpoint exposure** — The package does not automatically create a `/stats` endpoint. This is intentional — it lets the developer control access and routing.
 7. **Endpoint map is capped, not unlimited** — Requests that match no Express route (404s) are keyed by their raw path, but the endpoint map is bounded by `maxEndpoints` (default `1000`); beyond that, requests are aggregated into a per-method `"METHOD (overflow)"` bucket. See [Route Pattern Grouping](#route-pattern-grouping).
-8. **CommonJS requires a recent Node** — `require('apipulse')` works on Node ≥ 20.19 / ≥ 22.12 via native ES-module loading; on Node 18 use ESM `import` instead. See [CommonJS Usage](#commonjs-usage).
+8. **CommonJS build is generated** — The `require` entry point resolves to a compiled CommonJS build in `dist/cjs`, produced with Babel at pack time and shipped in the published tarball. Both ESM and CommonJS target Node ≥ 18. See [CommonJS Usage](#commonjs-usage).
 
 ---
 

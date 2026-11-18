@@ -6,13 +6,19 @@
   "workspaces": [
     "examples/express-demo"
   ],
-  "main": "./src/index.js",
+  "main": "./dist/cjs/index.js",
+  "module": "./src/index.js",
   "types": "./src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
-      "import": "./src/index.js",
-      "require": "./src/index.js"
+      "import": {
+        "types": "./src/index.d.ts",
+        "default": "./src/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.js"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -22,7 +28,10 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit",
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch --forceExit",
-    "demo": "node examples/express-demo/server.js"
+    "demo": "node examples/express-demo/server.js",
+    "build": "node scripts/build-cjs.mjs",
+    "pretest": "node scripts/build-cjs.mjs",
+    "prepack": "node scripts/build-cjs.mjs"
   },
   "keywords": [
     "api",
@@ -48,6 +57,7 @@
   "license": "MIT",
   "files": [
     "src",
+    "dist",
     "README.md",
     "LICENSE"
   ],
