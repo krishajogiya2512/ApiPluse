@@ -42,7 +42,7 @@ describe('package exports — module resolution', () => {
       '-e',
       "process.stdout.write(require('apipulse/package.json').name);",
     ]);
-    expect(out.trim()).toBe('apipulse');
+    expect(out.trim()).toBe('@krisha_2512/apipulse');
   });
 
   test('CommonJS: `require` resolves createMonitor (Node with require(esm))', () => {
